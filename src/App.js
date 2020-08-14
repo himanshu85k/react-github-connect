@@ -2,23 +2,32 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import User from "./User";
 import { Container, TextField } from "@material-ui/core";
-import { Pagination } from '@material-ui/lab';
+import Pagination from '@material-ui/lab/Pagination';
 import axios from 'axios';
 
 function App() {
   const [users, setUsers] = useState([]);
   const [token, setToken] = useState("");
+  const [page, setPage] = useState(1);
+  const [forksCount, setForksCount] = useState(0);
+
 
   useEffect(() => {
-    fetch("https://api.github.com/repos/facebook/react/forks?per_page=2&page=2")
+    getUsers();
+    fetch("https://api.github.com/search/repositories?q=user%3Afacebook+repo%3Areact")
       .then((res) => res.json())
       .then((res) => {
-        console.log("res", res);
-        setTimeout(() => {
-          setUsers(res);
-        }, 0);
+        setForksCount(res.items[0].forks_count)
       });
   }, []);
+
+  function getUsers(page = 1) {
+    fetch(`https://api.github.com/repos/facebook/react/forks?per_page=10&page=${page}`)
+      .then((res) => res.json())
+      .then((res) => {
+        setUsers(res);
+      });
+  }
 
   function handleFollowClick(username) {
     console.log(username, "clicked");
@@ -39,6 +48,11 @@ function App() {
     }
   }
 
+  function handlePageChange(e, page) {
+    setPage(page);
+    getUsers(page);
+  }
+
   return (
     <Container className="main">
       <TextField
@@ -53,17 +67,20 @@ function App() {
       *Ensure that 'user:follow' scope is enabled for this token
       <br />
       <h1>Users who have forked the Facebook/react repository:</h1>
-      <Pagination count={10} color="primary" />
-      {users.map((user) => {
-        return (
-          <User
-            key={user.id}
-            img={user.owner.avatar_url}
-            username={user.owner.login}
-            handleFollowClick={handleFollowClick}
-          />
-        );
-      })}
+      <Pagination count={parseInt(forksCount / 10, 10)} color="primary"
+        onChange={(e, page) => handlePageChange(e, page)} page={page} />
+      {
+        users.length > 0 ?
+          users.map((user) => {
+            return (
+              <User
+                key={user.id}
+                img={user.owner.avatar_url}
+                username={user.owner.login}
+                handleFollowClick={handleFollowClick}
+              />
+            );
+          }) : <p>Loading</p>}
     </Container>
   );
 }
