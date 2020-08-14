@@ -6,11 +6,10 @@ import Pagination from '@material-ui/lab/Pagination';
 import axios from 'axios';
 
 function App() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([{id: 0, owner: {avatar_url: '', login: 'test'}}]);
   const [token, setToken] = useState("");
   const [page, setPage] = useState(1);
   const [forksCount, setForksCount] = useState(0);
-
 
   useEffect(() => {
     getUsers();
@@ -55,18 +54,20 @@ function App() {
 
   return (
     <Container className="main">
+      <h1>Users who have forked the Facebook/react repository:</h1>
+      <br />
       <TextField
         fullWidth
-        label="Github personal access token"
-        variant="outlined"
+        label="Enter github personal access token"
         margin="dense"
+        variant="outlined"
         onChange={(e) => {
           setToken(e.target.value);
         }}
       />
       *Ensure that 'user:follow' scope is enabled for this token
       <br />
-      <h1>Users who have forked the Facebook/react repository:</h1>
+      <br />
       <Pagination count={parseInt(forksCount / 10, 10)} color="primary"
         onChange={(e, page) => handlePageChange(e, page)} page={page} />
       {

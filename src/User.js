@@ -8,11 +8,10 @@ import Button from '@material-ui/core/Button';
 
 
 export default function User(props) {
-    return <div>
-        <Card color="primary.main" className="d-flex">
-            <CardContent>
+    return <Card className="d-flex card">
+            <CardContent className="d-flex">
                 <Avatar alt={props.username} src={props.img} />
-                {props.username}
+                <p className="username">{props.username}</p>
             </CardContent>
             <CardActions>
                 <Button variant="contained" color="primary" onClick={() => {
@@ -20,5 +19,4 @@ export default function User(props) {
                 }}>Follow</Button>
             </CardActions>
         </Card>
-    </div>
 }
