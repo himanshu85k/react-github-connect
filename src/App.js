@@ -61,6 +61,7 @@ function App() {
         label="Enter github personal access token"
         margin="dense"
         variant="outlined"
+        type="password"
         onChange={(e) => {
           setToken(e.target.value);
         }}
